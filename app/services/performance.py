@@ -4,11 +4,27 @@ from datetime import datetime
 from app.repos.performance_repo import PerformanceRepo
 from app.models.models import IndexPerformanceResponse
 import os
+import socket
 
-REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+# -------------------------------
+# Auto-detect Redis host
+# -------------------------------
+def get_redis_host():
+    try:
+        # Check if 'redis' hostname resolves (Docker scenario)
+        socket.gethostbyname("redis")
+        return "redis"
+    except socket.gaierror:
+        # Fall back to localhost (local machine scenario)
+        return "localhost"
+
+REDIS_HOST = os.getenv("REDIS_HOST", get_redis_host())
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 REDIS_DB = int(os.getenv("REDIS_DB", 0))
 
+# -------------------------------
+# Redis client
+# -------------------------------
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True)
 
 class PerformanceError(Exception):
