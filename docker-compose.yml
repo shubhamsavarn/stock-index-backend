@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      SQLITE_PATH: "/app/data/stock_data.sqlite"
+      REDIS_URL: "redis://redis:6379/0"
+    volumes:
+      - ./data:/app/data   # persist SQLite file locally
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  redis:
+    image: redis:8
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - app-network
+    volumes:
+      - redis_data:/data  # optional Redis persistence
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis_data:
