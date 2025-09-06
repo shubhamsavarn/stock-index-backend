@@ -11,7 +11,9 @@ services:
         condition: service_healthy
     environment:
       SQLITE_PATH: "/app/data/stock_data.sqlite"
-      REDIS_URL: "redis://redis:6379/0"
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+      REDIS_DB: 0
     volumes:
       - ./data:/app/data   # persist SQLite file locally
     restart: unless-stopped

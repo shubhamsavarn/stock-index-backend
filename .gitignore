@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+.env
+
+# SQLite / local data
+data/*.sqlite
+redis_data/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
